@@ -17,4 +17,4 @@ urlpatterns = [
   path('lesson_update/<int:pk>/', LessonUpdateAPIView.as_view(), name='lesson_update'),  # Редактирование урока
   path('lesson_destroy/<int:pk>/', LessonDestroyAPIView.as_view(), name='lesson_destroy'),  # Удаление урока
 
-]
+] + router.urls   # Присоединяем курсы
