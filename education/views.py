@@ -2,6 +2,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,
 from rest_framework import viewsets
 
 from education.models import Course, Lesson
+from education.permissions import IsManager, IsAutor
 from education.serializers import CourseSerializer, LessonSerializer
 
 
@@ -10,12 +11,26 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
 
+    """ Функция привязывает автора к его курсу"""
+    def perform_create(self, serializer):
+        # привязка создателя к курсу
+        serializer.save()
+        self.request.user.course_set.add(serializer.instance)
+
+    """ Если юзер не модератор, функция показывает только его курсы"""
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return Course.objects.filter(autor=self.request.user)
+        elif self.request.user.is_staff:
+            return Course.objects.all()
+
 
 class LessonListAPIView(ListAPIView):
     """ Отвечает за отображение списка сущностей (Generic-класс)"""
 
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsManager | IsAutor]
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
@@ -23,6 +38,7 @@ class LessonRetrieveAPIView(RetrieveAPIView):
 
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsManager | IsAutor]
 
 
 class LessonCreateAPIView(CreateAPIView):
@@ -30,6 +46,13 @@ class LessonCreateAPIView(CreateAPIView):
 
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsManager | IsAutor]
+
+    """ Функция привязывает автора к его уроку"""
+    def perform_create(self, serializer):
+        new_lesson = serializer.save()
+        new_lesson.author = self.request.user
+        new_lesson.save()
 
 
 class LessonUpdateAPIView(UpdateAPIView):
@@ -37,6 +60,7 @@ class LessonUpdateAPIView(UpdateAPIView):
 
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsAutor]
 
 
 class LessonDestroyAPIView(DestroyAPIView):
@@ -44,3 +68,4 @@ class LessonDestroyAPIView(DestroyAPIView):
 
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsManager]
