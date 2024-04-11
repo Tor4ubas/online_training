@@ -1,9 +1,9 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework import viewsets
 
-from education.models import Course, Lesson
+from education.models import Course, Lesson, Subscription
 from education.permissions import IsManager, IsAutor
-from education.serializers import CourseSerializer, LessonSerializer
+from education.serializers import CourseSerializer, LessonSerializer, CourseCreateSerializer, SubscriptionSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -61,6 +61,26 @@ class LessonUpdateAPIView(UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAutor]
+
+
+class SubscriptionCreateAPIView(CreateAPIView):
+    """ Отвечает за создание сущности (Generic-класс) Подписка"""
+
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
+    permission_classes = [IsManager | IsAutor]
+
+    """ Функция ставит True, если пользователь подписался на курс"""
+    def perform_create(self, serializer):
+        serializer.save()
+        self.request.user.subscription_set.add(serializer.instance)
+
+
+class SubscriptionDestroyAPIView(DestroyAPIView):
+    """ Отвечает за удаление сущности (Generic-класс) Подписка"""
+
+    queryset = Subscription.objects.all()
+    permission_classes = [IsManager | IsAutor]
 
 
 class LessonDestroyAPIView(DestroyAPIView):
