@@ -56,7 +56,7 @@ class LessonApiTestCase(APITestCase):
             description_course='Тест',
         )
 
-        lesson = Lesson.objects.create(
+        Lesson.objects.create(
             title_lesson='Тестовый урок',
             description_lesson='Тест',
             url_course=course,

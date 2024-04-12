@@ -56,4 +56,3 @@ class LessonSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = '__all__'  # Выводить все поля
         validators = [UrlValidator(field='url_lesson')]
-

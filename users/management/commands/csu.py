@@ -5,6 +5,7 @@ from users.models import User
 
 class Command(BaseCommand):
     help = 'Создает фикстуру для созданных групп'
+
     def handle(self, *args, **options):
         # Создание группы модераторов
         moderator_group, created = Group.objects.get_or_create(name='Модераторы')
