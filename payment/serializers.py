@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from rest_framework.relations import SlugRelatedField
 
-from education.models import Course, Lesson
 from payment.models import Payment
 
 

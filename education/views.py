@@ -3,7 +3,7 @@ from rest_framework import viewsets
 
 from education.models import Course, Lesson, Subscription
 from education.permissions import IsManager, IsAutor
-from education.serializers import CourseSerializer, LessonSerializer, CourseCreateSerializer, SubscriptionSerializer
+from education.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
